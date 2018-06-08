@@ -18,11 +18,15 @@ func split(c rune) bool {
 	}
 }
 
+// Assembler build 0,1 string from assemble language.
+// Have 2 steps LoadLabels and Assemble.
+// Need to LoadLabels before Assemble if text contains labels
 type Assembler struct {
 	i      int
 	labels map[string]int
 }
 
+// LoadLabels load full text and build label to line number map.
 func (a *Assembler) LoadLabels(r io.Reader) error {
 	a.labels = make(map[string]int)
 	scanner := bufio.NewScanner(r)
@@ -40,6 +44,7 @@ func (a *Assembler) LoadLabels(r io.Reader) error {
 	return nil
 }
 
+// Assemble load full text and write 0,1 string
 func (a *Assembler) Assemble(r io.Reader, w io.Writer) error {
 	scanner := bufio.NewScanner(r)
 
