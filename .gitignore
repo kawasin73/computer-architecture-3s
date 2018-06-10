@@ -1,2 +1,4 @@
+.vagrant/
 vendor/
 sample.bin
+Quartus-lite-18.0.0.614-linux.tar
