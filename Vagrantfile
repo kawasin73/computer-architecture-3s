@@ -72,6 +72,8 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y ubuntu-desktop
+    # desktop and need for modelsim
+    # URL: http://bfin.sakura.ne.jp/?p=451
+    apt-get install -y ubuntu-desktop libxft2:i386 libxext6:i386 libncurses5:i386
   SHELL
 end
