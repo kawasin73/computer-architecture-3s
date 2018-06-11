@@ -2,3 +2,17 @@
 vendor/
 sample.bin
 Quartus-lite-18.0.0.614-linux.tar
+computer/db/
+computer/incremental_db/
+computer/output_files/
+computer/simulation/
+computer/work/
+computer/c5_pin_model_dump.txt
+computer/transcript
+computer/computer_nativelink_simulation.rpt
+*.mpf
+*.qpf
+*.qsf
+*.qws
+*.mti
+*.bak
