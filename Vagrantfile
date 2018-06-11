@@ -71,9 +71,10 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
+    dpkg --add-architecture i386
     apt-get update
     # desktop and need for modelsim
     # URL: http://bfin.sakura.ne.jp/?p=451
-    apt-get install -y ubuntu-desktop libxft2:i386 libxext6:i386 libncurses5:i386
+    apt-get install -y ubuntu-desktop libxft2:i386 libxext6:i386 libncurses5:i386 libstdc++6:i386
   SHELL
 end
