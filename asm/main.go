@@ -45,12 +45,18 @@ func (a *Assembler) LoadLabels(r io.Reader) error {
 }
 
 // Assemble load full text and write 0,1 string
+// comment will be follows `;`
 func (a *Assembler) Assemble(r io.Reader, w io.Writer) error {
 	scanner := bufio.NewScanner(r)
 
 	for a.i = 0; scanner.Scan(); a.i++ {
 		text := scanner.Text()
 		text = strings.Replace(text, ":", " : ", -1)
+		commentIndex := strings.Index(text, ";")
+		if commentIndex != -1 {
+			// remove comment
+			text = text[:commentIndex]
+		}
 		line := strings.FieldsFunc(text, split)
 		if len(line) == 0 {
 			continue
