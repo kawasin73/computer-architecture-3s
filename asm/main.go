@@ -280,8 +280,10 @@ func parseDpl(v string) (base, dpl int, err error) {
 }
 
 func render(w io.Writer, digit, num int) error {
+	unum := uint(num)
 	format := "%0" + strconv.Itoa(digit) + "b_"
-	_, err := fmt.Fprintf(w, format, num)
+	bin := fmt.Sprintf(format, unum)
+	_, err := fmt.Fprint(w, bin[len(bin)-digit-1:])
 	return err
 }
 
