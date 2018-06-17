@@ -275,7 +275,7 @@ func (a *Assembler) labelRender(w io.Writer, line []string, op int) error {
 
 func parseDpl(v string) (base, dpl int, err error) {
 	r := strings.NewReader(v)
-	_, err = fmt.Fscanf(r, "%d(r%d)", &base, &dpl)
+	_, err = fmt.Fscanf(r, "%d(r%d)", &dpl, &base)
 	return
 }
 
