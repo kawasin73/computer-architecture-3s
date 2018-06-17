@@ -7,7 +7,7 @@ module execute(clk, ins, pc, reg1, reg2, wra, result, nextpc);
   wire [5:0] op;
   wire [4:0] shift, operation;
   wire [25:0] addr;
-  wire [31:0] dpl_imm, operand2, alu_result, nonbranch, branch, mem_address, dm_r_data;
+  wire signed [31:0] dpl_imm, operand2, alu_result, nonbranch, branch, mem_address, dm_r_data;
   wire [3:0] wren;
 
   function [4:0] opr_gen;
@@ -25,16 +25,16 @@ module execute(clk, ins, pc, reg1, reg2, wra, result, nextpc);
   endfunction
 
   function [31:0] alu;
-    input [4:1] opr, shift;
-    input [31:0] operand1, operand2;
+    input [4:0] opr, shift;
+    input signed [31:0] operand1, operand2;
 
     case (opr)
       5'd0: alu = operand1 + operand2;
-      5'd1: alu = operand1 - operand2;
+      5'd2: alu = operand1 - operand2;
       5'd8: alu = operand1 & operand2;
       5'd9: alu = operand1 | operand2;
       5'd10: alu = operand1 ^ operand2;
-      5'd11: alu = ~(operand1 & operand2);
+      5'd11: alu = ~(operand1 | operand2);
       5'd16: alu = operand1 << shift;
       5'd17: alu = operand1 >> shift;
       5'd18: alu = operand1 >>> shift;
@@ -59,7 +59,8 @@ module execute(clk, ins, pc, reg1, reg2, wra, result, nextpc);
 
   function [31:0] npc;
     input [5:0] op;
-    input [31:0] reg1, reg2, branch, nonbranch, addr;
+    input signed [31:0] reg1, reg2;
+    input [31:0] branch, nonbranch, addr;
 
     case (op)
       6'd32: npc = (reg1 == reg2) ? branch : nonbranch;
@@ -160,16 +161,16 @@ module test_alu;
   reg [31:0] operand1, operand2, result;
 
   function [31:0] alu;
-    input [4:1] opr, shift;
-    input [31:0] operand1, operand2;
+    input [4:0] opr, shift;
+    input signed [31:0] operand1, operand2;
 
     case (opr)
       5'd0: alu = operand1 + operand2;
-      5'd1: alu = operand1 - operand2;
+      5'd2: alu = operand1 - operand2;
       5'd8: alu = operand1 & operand2;
       5'd9: alu = operand1 | operand2;
       5'd10: alu = operand1 ^ operand2;
-      5'd11: alu = ~(operand1 & operand2);
+      5'd11: alu = ~(operand1 | operand2);
       5'd16: alu = operand1 << shift;
       5'd17: alu = operand1 >> shift;
       5'd18: alu = operand1 >>> shift;
@@ -207,4 +208,56 @@ module test_alu;
 
   initial
     $monitor($stime, " op=%h, shift=%h, op1=%h, op2=%h, result=%h", opr, shift, operand1, operand2, result);
+endmodule
+
+module test_npc;
+  reg [5:0] op;
+  reg signed [31:0] reg1, reg2;
+  reg [31:0] branch, nonbranch, addr, nextpc;
+
+  function [31:0] npc;
+    input [5:0] op;
+    input signed [31:0] reg1, reg2;
+    input [31:0] branch, nonbranch, addr;
+
+    case (op)
+      6'd32: npc = (reg1 == reg2) ? branch : nonbranch;
+      6'd33: npc = (reg1 != reg2) ? branch : nonbranch;
+      6'd34: npc = (reg1 < reg2) ? branch : nonbranch;
+      6'd35: npc = (reg1 <= reg2) ? branch : nonbranch;
+      6'd40, 6'd41: npc = addr;
+      6'd42: npc = reg1;
+      default: npc = nonbranch;
+    endcase
+  endfunction
+
+  initial
+    begin
+      op = 0;
+      reg1 = 32'h00000010;
+      reg2 = 32'h00000010;
+      branch = 32'hffffffff;
+      nonbranch = 32'h00000001;
+      addr = 32'h00000002;
+      nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 1; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 32; reg2 = 32'h00000010; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 32; reg2 = 32'h00000001; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 32; reg2 = 32'h00000011; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 33; reg2 = 32'h00000010; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 33; reg2 = 32'h00000001; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 33; reg2 = 32'h00000011; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 34; reg2 = 32'h00000010; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 34; reg2 = 32'h00000001; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 34; reg2 = 32'h00000011; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 35; reg2 = 32'h00000010; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 35; reg2 = 32'h00000001; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 35; reg2 = 32'h00000011; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 40; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 41; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+      #100 op = 42; nextpc = npc(op, reg1, reg2, branch, nonbranch, addr);
+    end
+
+  initial
+    $monitor($stime, " op=%d, reg1=%h, reg2=%h, nextpc=%h", op, reg1, reg2, nextpc);
 endmodule

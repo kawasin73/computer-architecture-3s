@@ -22,3 +22,22 @@ $ tar -xvf Quartus-lite-18.0.0.614-linux.tar
 $ ./setup.sh
 $ exit
 ```
+
+## テストの実行
+
+1. テストコードをアセンブル
+    ```
+    go run main.go computer/test.asm > computer/test.bnr
+    ```
+2. ModelSimで全てのVerilogコードをコンパイル
+3. ModelSimでシミュレーションの実行 + 出力
+    ```
+    vsim work.test_computer
+    run 6000
+    mem save -o sample.mem -f mti -data symbolic -addr hex /test_computer/computer_body/rf_body/rf
+    ```
+4. 出力を検証する
+    ```
+    diff computer/test.mem computer/sample.mem
+    ```
+5. 差分がなかった場合はテスト完了

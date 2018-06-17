@@ -11,7 +11,7 @@ module computer(clk, rstd);
   reg_file rf_body(clk, rstd, result, ins[25:21], ins[20:16], wra, (~|wra), reg1, reg2);
 
   initial
-    $monitor($time, "rstd=%d, clk=%d, pc=%h, ins=%h, wra=%h, reg1=%h, reg2=%h", rstd, clk, pc, ins, wra, reg1, reg2);
+    $monitor($time, "rstd=%d, clk=%d, pc=%d, nextpc=%d, ins=%h, wra=%h, reg1=%h, reg2=%h", rstd, clk, pc, nextpc, ins, wra, reg1, reg2);
 endmodule
 
 module test_computer;
