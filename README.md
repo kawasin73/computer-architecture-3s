@@ -23,6 +23,36 @@ $ ./setup.sh
 $ exit
 ```
 
+## 起動
+
+VM を起動するためには、ホストOSのターミナルで以下のvagrantコマンドを使います。
+
+```bash
+vagrant up
+```
+
+GUIが現れるため、GUIからログインします。パスワードは、`vagrant` です。
+
+VM内のGUIでターミナルを起動します。
+
+`Quartus` と `ModelSim` の起動は以下のコマンドを VM内のターミナルで実行して行います。
+
+```bash
+# Quartus の起動
+$HOME/intelFPGA_lite/18.0/quartus/bin/quartus
+
+# ModelSim の起動
+$HOME/intelFPGA_lite/18.0/modelsim_ase/linuxaloem/vsim
+```
+
+## 停止
+
+以下のコマンドをホストOSのターミナルから実行することで VM を停止できます。
+
+```bash
+vagrant halt
+```
+
 ## テストの実行
 
 1. テストコードをアセンブル
