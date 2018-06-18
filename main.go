@@ -1,12 +1,13 @@
 package main
 
 import (
-	"os"
-	"github.com/kawasin73/computer-architecture-3s/asm"
-	"log"
 	"bufio"
-	"github.com/pkg/errors"
 	"io"
+	"log"
+	"os"
+
+	"github.com/kawasin73/computer-architecture-3s/asm"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -46,7 +47,7 @@ func load(a *asm.Assembler, file string) error {
 	return nil
 }
 
-func assemble(a *asm.Assembler, w io.Writer, file string) error  {
+func assemble(a *asm.Assembler, w io.Writer, file string) error {
 	f, err := os.Open(file)
 	if err != nil {
 		return errors.Wrap(err, "open input file")

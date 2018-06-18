@@ -1,12 +1,13 @@
 package asm
 
 import (
-	"io"
 	"bufio"
-	"strings"
 	"fmt"
-	"github.com/pkg/errors"
+	"io"
 	"strconv"
+	"strings"
+
+	"github.com/pkg/errors"
 )
 
 func split(c rune) bool {
