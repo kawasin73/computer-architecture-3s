@@ -17,3 +17,7 @@ computer/computer_nativelink_simulation.rpt
 *.mti
 *.bak
 computer/sample.mem
+computer/data0.mem
+computer/data1.mem
+computer/data2.mem
+computer/data3.mem

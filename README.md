@@ -65,9 +65,17 @@ vagrant halt
     vsim work.test_computer
     run 6000
     mem save -o sample.mem -f mti -data symbolic -addr hex /test_computer/computer_body/rf_body/rf
+    mem save -o data0.mem -f mti -data symbolic -addr hex /test_computer/computer_body/execute_body/data_mem_body0/d_mem
+    mem save -o data1.mem -f mti -data symbolic -addr hex /test_computer/computer_body/execute_body/data_mem_body1/d_mem
+    mem save -o data2.mem -f mti -data symbolic -addr hex /test_computer/computer_body/execute_body/data_mem_body2/d_mem
+    mem save -o data3.mem -f mti -data symbolic -addr hex /test_computer/computer_body/execute_body/data_mem_body3/d_mem
     ```
 4. 出力を検証する
     ```
     diff computer/test.mem computer/sample.mem
+    diff computer/test0.mem computer/data0.mem
+    diff computer/test1.mem computer/data1.mem
+    diff computer/test2.mem computer/data2.mem
+    diff computer/test3.mem computer/data3.mem
     ```
 5. 差分がなかった場合はテスト完了
