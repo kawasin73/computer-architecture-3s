@@ -20,6 +20,7 @@ module execute(clk, ins, pc, reg1, reg2, wra, result, nextpc);
       6'd4: opr_gen = 5'd8;
       6'd5: opr_gen = 5'd9;
       6'd6: opr_gen = 5'd10;
+      6'd16, 6'd18, 6'd20, 6'd24, 6'd26, 6'd28: opr_gen = 5'd0;
       default: opr_gen = 5'h1f;
     endcase
   endfunction
@@ -103,7 +104,7 @@ module execute(clk, ins, pc, reg1, reg2, wra, result, nextpc);
   assign operand2 = (op == 6'd0) ? reg2 : dpl_imm;
   assign alu_result = alu(opr_gen(op, operation), shift, reg1, operand2);
 
-  assign mem_address = (reg1 + dpl_imm) >>> 2;
+  assign mem_address = alu_result >>> 2;
   assign wren = wrengen(op);
 
   data_mem data_mem_body0(mem_address[7:0], clk, reg2[7:0], wren[0], dm_r_data[7:0]);
