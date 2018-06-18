@@ -47,7 +47,7 @@ go run main.go report/sample.asm > report/sample.bin
 
 > 目的とするプロセッサのブロック図を書け
 
-
+![computer.png](./computer.png)
 
 ### 3.2
 
