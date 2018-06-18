@@ -6,26 +6,26 @@ import (
 	"log"
 	"bufio"
 	"github.com/pkg/errors"
+	"io"
 )
 
 func main() {
-	a := new(asm.Assembler)
+	a := asm.NewAssembler()
 	if len(os.Args) > 1 {
-		input := os.Args[1]
-		if err := load(a, input); err != nil {
-			log.Println(err)
-			return
+		inputs := os.Args[1:]
+		for _, input := range inputs {
+			if err := load(a, input); err != nil {
+				log.Printf("failed to load (%v) %v\n", input, err)
+				return
+			}
 		}
-		r, err := os.Open(input)
-		if err != nil {
-			log.Println("failed to open input file ", err)
-			return
-		}
-		defer r.Close()
 		bw := bufio.NewWriter(os.Stdout)
-		if err = a.Assemble(r, bw); err != nil {
-			log.Println("failed to assemble ", err)
-		} else if err = bw.Flush(); err != nil {
+		for _, input := range inputs {
+			if err := assemble(a, bw, input); err != nil {
+				log.Printf("failed to assemble (%v) %v\n", input, err)
+			}
+		}
+		if err := bw.Flush(); err != nil {
 			log.Println("failed to flush ", err)
 		}
 	} else {
@@ -36,12 +36,25 @@ func main() {
 func load(a *asm.Assembler, file string) error {
 	f, err := os.Open(file)
 	if err != nil {
-		return errors.Wrap(err, "failed to open input file")
+		return errors.Wrap(err, "open input file")
 	}
 	defer f.Close()
 
 	if err = a.LoadLabels(f); err != nil {
-		return errors.Wrap(err, "failed to load labels")
+		return errors.Wrap(err, "load labels")
+	}
+	return nil
+}
+
+func assemble(a *asm.Assembler, w io.Writer, file string) error  {
+	f, err := os.Open(file)
+	if err != nil {
+		return errors.Wrap(err, "open input file")
+	}
+	defer f.Close()
+
+	if err = a.Assemble(f, w); err != nil {
+		return errors.Wrap(err, "assemble")
 	}
 	return nil
 }

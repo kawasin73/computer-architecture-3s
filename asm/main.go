@@ -23,14 +23,26 @@ func split(c rune) bool {
 // Need to LoadLabels before Assemble if text contains labels
 type Assembler struct {
 	i      int
+	li     int
 	labels map[string]int
+}
+
+func NewAssembler() *Assembler {
+	return &Assembler{
+		labels: make(map[string]int),
+	}
+}
+
+func (a *Assembler) Reset() {
+	a.i = 0
+	a.li = 0
+	a.labels = make(map[string]int)
 }
 
 // LoadLabels load full text and build label to line number map.
 func (a *Assembler) LoadLabels(r io.Reader) error {
-	a.labels = make(map[string]int)
 	scanner := bufio.NewScanner(r)
-	for i := 0; scanner.Scan(); i++ {
+	for ; scanner.Scan(); a.li++ {
 		text := scanner.Text()
 		text = strings.Replace(text, ":", " : ", -1)
 		line := strings.FieldsFunc(text, split)
@@ -38,7 +50,7 @@ func (a *Assembler) LoadLabels(r io.Reader) error {
 			return fmt.Errorf("too short line : (%v)", text)
 		}
 		if line[1] == ":" {
-			a.labels[line[0]] = i
+			a.labels[line[0]] = a.li
 		}
 	}
 	return nil
@@ -49,7 +61,7 @@ func (a *Assembler) LoadLabels(r io.Reader) error {
 func (a *Assembler) Assemble(r io.Reader, w io.Writer) error {
 	scanner := bufio.NewScanner(r)
 
-	for a.i = 0; scanner.Scan(); a.i++ {
+	for ; scanner.Scan(); a.i++ {
 		text := scanner.Text()
 		text = strings.Replace(text, ":", " : ", -1)
 		commentIndex := strings.Index(text, ";")
