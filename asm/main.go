@@ -43,7 +43,7 @@ func (a *Assembler) Reset() {
 // LoadLabels load full text and build label to line number map.
 func (a *Assembler) LoadLabels(r io.Reader) error {
 	scanner := bufio.NewScanner(r)
-	for ; scanner.Scan(); a.li++ {
+	for scanner.Scan() {
 		text := scanner.Text()
 		text = strings.Replace(text, ":", " : ", -1)
 		line := strings.FieldsFunc(text, split)
@@ -53,6 +53,7 @@ func (a *Assembler) LoadLabels(r io.Reader) error {
 		if line[1] == ":" {
 			a.labels[line[0]] = a.li
 		}
+		a.li++
 	}
 	return nil
 }
@@ -61,8 +62,7 @@ func (a *Assembler) LoadLabels(r io.Reader) error {
 // comment will be follows `;`
 func (a *Assembler) Assemble(r io.Reader, w io.Writer) error {
 	scanner := bufio.NewScanner(r)
-
-	for ; scanner.Scan(); a.i++ {
+	for scanner.Scan() {
 		text := scanner.Text()
 		text = strings.Replace(text, ":", " : ", -1)
 		commentIndex := strings.Index(text, ";")
@@ -142,6 +142,7 @@ func (a *Assembler) Assemble(r io.Reader, w io.Writer) error {
 		if err != nil {
 			return errors.Wrapf(err, "(line: %v) : %v", a.i+1, line)
 		}
+		a.i++
 	}
 	return nil
 }

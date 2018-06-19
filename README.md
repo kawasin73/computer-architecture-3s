@@ -1,5 +1,15 @@
 # コンピューターアーキテクチャ課題
 
+## golang 環境立ち上げ
+
+Mac 環境では、[Homebrew](https://brew.sh/index_ja) を使って環境をインストールします。
+
+```bash
+brew install go dep
+git clone https://github.com/kawasin73/computer-architecture-3s.git && cd computer-architecture-3s
+dep ensure
+```
+
 ## アセンブラの実行
 
 ```bash
